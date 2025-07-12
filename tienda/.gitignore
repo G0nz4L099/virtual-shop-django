@@ -1,0 +1,27 @@
+# ─── ENTORNO VIRTUAL ─────────────────────────
+venv/
+env/
+*.py[cod]
+__pycache__/
+*.sqlite3-journal
+
+# ─── ARCHIVOS TEMPORALES ─────────────────────
+*.log
+*.pot
+*.pyc
+*.pyo
+*.swp
+*.tmp
+*.bak
+*.DS_Store
+*.idea/
+.vscode/
+
+# ─── STATIC Y MEDIA ──────────────────────────
+# En entorno académico, queremos que media y static se compartan
+# Así que NO los ignoramos
+
+# ─── ARCHIVOS DE PRODUCCIÓN (opcional) ───────
+#*.env
+#.env.local
+#.env.*.local
