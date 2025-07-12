@@ -1,0 +1,164 @@
+{% extends 'core/base.html' %}
+{% block title %}Dashboard de Ventas{% endblock %}
+{% block content %}
+{% load static %}
+
+<style>
+  body {
+    background-color: #121212;
+    color: #e0e0e0;
+  }
+
+  .dashboard-container {
+    max-width: 1000px;
+    margin: 80px auto 50px auto;
+    background-color: #1e1e1e;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.15);
+  }
+
+  .kpi-container {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  .kpi-box {
+    background-color: #2a2a2a;
+    padding: 20px;
+    border-radius: 12px;
+    flex: 1;
+    margin: 0 10px;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+  }
+
+  .kpi-box h5 {
+    color: #00ffff;
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .kpi-box p {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+  }
+
+  canvas {
+    background-color: #2a2a2a;
+    border-radius: 10px;
+    padding: 15px;
+  }
+
+  .chart-section {
+    margin-top: 40px;
+  }
+</style>
+
+<div class="container-fluid mt-5 mb-5">
+  <div class="row justify-content-center text-white text-center g-4">
+
+    <!-- KPIs -->
+    <div class="col-md-3">
+      <div class="bg-dark p-4 rounded shadow border border-info">
+        <h6 class="text-white">Total de Ventas</h6>
+        <h3 class="text-info">{{ total_ventas }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="bg-dark p-4 rounded shadow border border-info">
+        <h6 class="text-white">Total Ingresado</h6>
+        <h3 class="text-info">${{ total_ingresos }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="bg-dark p-4 rounded shadow border border-info">
+        <h6 class="text-white">Promedio por Venta</h6>
+        <h3 class="text-info">${{ promedio_venta }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráfico -->
+  <div class="row justify-content-center mt-5">
+    <div class="col-lg-8 px-4">
+      <div class="bg-dark p-4 rounded shadow border border-info">
+        <h4 class="text-center text-white mb-4">Ventas de los últimos 30 días</h4>
+        <canvas id="ventasChart" style="height: 1080px;"></canvas>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  let labels = JSON.parse('{{ labels|escapejs }}');
+  let datos = JSON.parse('{{ datos|escapejs }}');
+
+  if (labels.length && datos.length) {
+    const ctx = document.getElementById('ventasChart').getContext('2d');
+
+    new Chart(ctx, {
+      type: 'line',  // 📈 CAMBIO A LÍNEA
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Ingresos ($)',
+          data: datos,
+          fill: true,
+          backgroundColor: 'rgba(0, 255, 255, 0.1)',
+          borderColor: '#00ffff',
+          borderWidth: 2,
+          tension: 0.4,
+          pointBackgroundColor: '#00ffff',
+          pointRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        animation: {
+          duration: 1000,
+          easing: 'easeOutQuart'
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              color: '#e0e0e0',
+              callback: value => '$' + value.toLocaleString()
+            },
+            grid: { color: '#333' }
+          },
+          x: {
+            ticks: { color: '#e0e0e0' },
+            grid: { color: '#333' }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: '#e0e0e0',
+              font: { size: 14 }
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: ctx => 'Ingresos: $' + ctx.parsed.y.toLocaleString()
+            }
+          }
+        }
+      }
+    });
+  } else {
+    document.getElementById('ventasChart').outerHTML = `
+      <p class="text-center text-warning">No hay datos para mostrar el gráfico.</p>
+    `;
+  }
+</script>
+{% endblock %}

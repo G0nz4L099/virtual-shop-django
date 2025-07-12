@@ -1,0 +1,150 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Carrito{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    background-image: url("{% static 'core/base/assets/carrito.jpg' %}");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    color: #f0f0f0;
+  }
+
+  .carrito-container {
+    background-color: rgba(10, 10, 10, 0.9);
+    padding: 40px;
+    border-radius: 18px;
+    max-width: 1200px;
+    width: 90%;
+    margin: 60px auto;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+  }
+
+  h2 {
+    color: #00ffff;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+    color: #f0f0f0;
+  }
+
+  th, td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #333;
+  }
+
+  th {
+    background-color: #1d1d1d;
+    color: #00ffff;
+    font-weight: 600;
+  }
+
+  td {
+    background-color: #2b2b2b;
+  }
+
+  .btn-danger {
+    background-color: #ff4d4d;
+    border: none;
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+
+  .btn-danger:hover {
+    background-color: #cc0000;
+    transform: scale(1.05);
+  }
+
+  .btn-success {
+    background-color: #00ffaa;
+    color: #000;
+    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 15px;
+    transition: 0.3s;
+  }
+
+  .btn-success:hover {
+    background-color: #00cc88;
+    transform: scale(1.05);
+  }
+
+  .total {
+    text-align: right;
+    font-size: 20px;
+    font-weight: bold;
+    color: #00ffff;
+    margin-top: 15px;
+  }
+
+  .btn-wrapper {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .text-warning {
+    text-align: center;
+    font-size: 18px;
+    margin-top: 20px;
+    color: #ffc107;
+  }
+</style>
+
+<div class="carrito-container">
+  <h2>Carrito de Compras</h2>
+
+  {% if items %}
+    <form method="post">
+      {% csrf_token %}
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Subtotal</th>
+            <th>Eliminar</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td>{{ item.producto.nombre }}</td>
+            <td>{{ item.cantidad }}</td>
+            <td>${{ item.producto.precio }}</td>
+            <td>${{ item.subtotal }}</td>
+            <td>
+              <form method="post" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="item_id" value="{{ item.id }}">
+                <button type="submit" name="eliminar" class="btn btn-danger btn-sm">Eliminar</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="total">Total: ${{ total }}</div>
+
+      <div class="btn-wrapper">
+        <button type="submit" name="confirmar" class="btn btn-success">Confirmar Compra</button>
+      </div>
+    </form>
+  {% else %}
+    <p class="text-warning">Tu carrito está vacío.</p>
+  {% endif %}
+</div>
+{% endblock %}

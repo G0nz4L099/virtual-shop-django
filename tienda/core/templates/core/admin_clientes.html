@@ -1,0 +1,106 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+<style>
+  body {
+    background-color: #0e0e0e;
+    color: #e0e0e0;
+  }
+
+  .clientes-container {
+    width: 95vw;
+    max-width: 1400px;
+    margin: 40px auto;
+    background-color: #1a1a1a;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+    overflow-x: auto; /* Para scroll horizontal */
+  }
+
+  .header-clientes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .header-clientes h2 {
+    color: #00ffff;
+    margin: 0;
+    font-size: 24px;
+  }
+
+  .btn-exportar {
+    background-color: #00ffff;
+    color: #000;
+    font-weight: bold;
+    border: none;
+    padding: 8px 18px;
+    font-size: 14px;
+    border-radius: 6px;
+    transition: 0.3s;
+    text-decoration: none;
+  }
+
+  .btn-exportar:hover {
+    background-color: #00caca;
+    transform: scale(1.05);
+  }
+
+  table {
+    width: 100%;
+    min-width: 1000px; /* Asegura el scroll si se reduce la pantalla */
+  }
+
+  .table {
+    background-color: #121212;
+    color: #e0e0e0;
+  }
+
+  .table th {
+    background-color: #1e1e1e;
+    color: #00ffff;
+    text-align: center;
+  }
+
+  .table td {
+    background-color: #1a1a1a;
+    text-align: center;
+    vertical-align: middle;
+  }
+</style>
+
+<div class="clientes-container">
+  <div class="header-clientes">
+    <h2>Clientes Registrados</h2>
+    <a href="{% url 'exportar_clientes' %}" class="btn-exportar">Exportar Clientes</a>
+  </div>
+
+  <table class="table table-bordered table-dark table-hover">
+    <thead>
+      <tr>
+        <th>Usuario</th>
+        <th>Email</th>
+        <th>Edad</th>
+        <th>Teléfono</th>
+        <th>Fecha de Registro</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cliente in clientes %}
+      <tr>
+        <td>{{ cliente.username }}</td>
+        <td>{{ cliente.email }}</td>
+        <td>{{ cliente.edad }}</td>
+        <td>{{ cliente.telefono }}</td>
+        <td>{{ cliente.fecha_registro|date:"d/m/Y H:i" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
+

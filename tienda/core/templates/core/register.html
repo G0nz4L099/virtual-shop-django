@@ -1,0 +1,117 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #121212;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .card-glass {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 30px;
+        color: #fff;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    }
+    .card-glass h2 {
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #00ffff;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+    .form-control {
+        background-color: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        color: #fff;
+        width: 100%;
+        padding: 8px 12px;
+        border-radius: 6px;
+    }
+    .form-control:focus {
+        background-color: rgba(255,255,255,0.15);
+        color: #00ffff;
+        border-color: #00ffff;
+        box-shadow: 0 0 5px #00ffff;
+    }
+    .btn-tech {
+        background-color: #00ffff;
+        color: #000;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        border-radius: 6px;
+        padding: 10px;
+    }
+    .btn-tech:hover {
+        background-color: #00d0d0;
+        transform: scale(1.02);
+    }
+    .help-icon {
+        margin-left: 8px;
+        cursor: pointer;
+        color: #00ffff;
+        border-radius: 50%;
+        font-weight: bold;
+        border: 1px solid #00ffff;
+        padding: 0 6px;
+        font-size: 12px;
+        position: relative;
+    }
+    .help-tooltip {
+        display: none;
+        position: absolute;
+        top: 20px;
+        left: 25px;
+        width: 250px;
+        background-color: #222;
+        color: #ccc;
+        padding: 10px;
+        font-size: 12px;
+        border: 1px solid #00ffff;
+        border-radius: 5px;
+        z-index: 100;
+    }
+    .help-icon:hover .help-tooltip {
+        display: block;
+    }
+</style>
+
+<div class="container-md min-vh-100 d-flex align-items-center justify-content-center">
+    <div class="card-glass" style="width: 100%; max-width: 500px;">
+        <h2>Crear Cuenta</h2>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label>{{ field.label }}
+                        {% if field.name == "password1" %}
+                            <span class="help-icon">?
+                                <div class="help-tooltip">
+                                    Tu contraseña debe tener al menos 8 caracteres, no ser común y no ser completamente numérica.
+                                </div>
+                            </span>
+                        {% endif %}
+                    </label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <div class="text-danger mt-1" style="font-size: 13px;">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-tech w-100">Registrarme</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h2>Mi Perfil</h2>
+<p>Usuario: {{ user.username }}</p>
+<p>Email: {{ user.email }}</p>
+<p>Teléfono: {{ user.telefono }}</p>
+<p>Edad: {{ user.edad }}</p>
+<p><a href="{% url 'password_change' %}" type="button" class="btn btn-danger">Cambiar contraseña</a></p>
+     
+{% endblock %}
+  

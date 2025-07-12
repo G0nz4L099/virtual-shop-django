@@ -1,0 +1,87 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    body {
+    background-image: url("{% static 'core/base/assets/fondo.jpg' %}");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    color: #f0f0f0;
+}
+
+    .product-card {
+        background-color: #1a1a1a;
+        border: 1px solid #00ffff20;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 255, 255, 0.1);
+        padding: 20px;
+        margin-bottom: 30px;
+        transition: transform 0.3s ease;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 25px rgba(0, 255, 255, 0.25);
+    }
+
+    .product-card img {
+        max-width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+
+    .btn-turquesa {
+        background-color: #00ffff;
+        color: #000;
+        font-weight: 600;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-turquesa:hover {
+        background-color: #00dada;
+        transform: scale(1.02);
+    }
+
+    h2 {
+        color: #00ffff;
+        margin-bottom: 30px;
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="text-center">Catálogo de Productos</h2>
+    <div class="row">
+        {% for producto in productos %}
+        <div class="col-md-4">
+            <div class="product-card">
+                {% if producto.imagen %}
+                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="img-fluid d-block mx-auto" >
+                {% else %}
+                    <img src="{% static 'img/no-image.png' %}" alt="Sin imagen" class="img-fluid d-block mx-auto">
+
+                {% endif %}
+                <h4>{{ producto.nombre }}</h4>
+                <p>{{ producto.descripcion }}</p>
+                <p><strong>${{ producto.precio }}</strong></p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="producto_id" value="{{ producto.id }}">
+                    <div class="input-group mb-2">
+                        <input type="number" name="cantidad" value="1" min="1" max="{{ producto.stock }}" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-turquesa w-100">Agregar al carrito</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
