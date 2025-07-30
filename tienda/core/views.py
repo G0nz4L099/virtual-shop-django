@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Producto, Carrito, ItemCarrito, Cliente, DetalleVenta, Venta , Reseña
+from .models import Producto, Carrito, ItemCarrito, Cliente, DetalleVenta, Venta , Reseña , DireccionEnvio
 from .forms import RegistroForm, AgregarAlCarritoForm
 
 
@@ -115,9 +115,65 @@ def carrito(request):
         'total': total
     })
 
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from core.models import DireccionEnvio
+import os
+
 @login_required
 def perfil(request):
-    return render(request, 'core/perfil.html')
+    user = request.user
+
+    direccion_envio = DireccionEnvio.objects.filter(cliente=user).first()
+
+    if request.method == 'POST':
+        # Actualizar datos personales
+        user.first_name = request.POST.get('nombre', user.first_name)
+        user.last_name = request.POST.get('apellido', user.last_name)
+        user.edad = request.POST.get('edad', user.edad)
+        user.telefono = request.POST.get('telefono', user.telefono)
+        user.email = request.POST.get('email', user.email)
+
+        # Procesar foto si se subió
+        nueva_foto = request.FILES.get('foto')
+        if nueva_foto:
+            # Eliminar imagen anterior si existe
+            if user.foto and hasattr(user.foto, 'path') and os.path.isfile(user.foto.path):
+                os.remove(user.foto.path)
+
+            user.foto = nueva_foto
+
+        user.save()
+
+        # Dirección de envío
+        if not direccion_envio:
+            direccion_envio = DireccionEnvio(cliente=user)
+
+        direccion_envio.pais = request.POST.get('pais', direccion_envio.pais)
+        direccion_envio.provincia = request.POST.get('provincia', direccion_envio.provincia)
+        direccion_envio.ciudad = request.POST.get('ciudad', direccion_envio.ciudad)
+        direccion_envio.codigo_postal = request.POST.get('codigo_postal', direccion_envio.codigo_postal)
+        direccion_envio.calle = request.POST.get('calle', direccion_envio.calle)
+        direccion_envio.numero = request.POST.get('numero', direccion_envio.numero)
+        direccion_envio.casa_depto = request.POST.get('casa_depto', direccion_envio.casa_depto)
+        direccion_envio.piso = request.POST.get('piso', direccion_envio.piso)
+        direccion_envio.save()
+
+        messages.success(request, "Perfil actualizado correctamente.")
+        return redirect('perfil')
+
+    ventas = Venta.objects.filter(cliente=user).order_by('-fecha')
+    total_gastado = sum(venta.total for venta in ventas)
+
+    return render(request, 'core/perfil.html', {
+        'direccion_envio': direccion_envio,
+        'ventas': ventas,
+        'total_gastado': total_gastado,
+    })
 
 
 

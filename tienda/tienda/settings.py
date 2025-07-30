@@ -136,6 +136,6 @@ AUTH_USER_MODEL = 'core.Cliente'
 LOGIN_URL = '/login/'
 
 import os
-MEDIA_ROOT = os.path.join(BASE_DIR, 'core/media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 

@@ -1,11 +1,178 @@
 {% extends 'core/base.html' %}
+{% load static %}
+
 {% block content %}
-<h2>Mi Perfil</h2>
-<p>Usuario: {{ user.username }}</p>
-<p>Email: {{ user.email }}</p>
-<p>Teléfono: {{ user.telefono }}</p>
-<p>Edad: {{ user.edad }}</p>
-<p><a href="{% url 'password_change' %}" type="button" class="btn btn-danger">Cambiar contraseña</a></p>
-     
+<div class="profile-banner text-center text-white py-4 mb-4" style="background: linear-gradient(135deg, #0d7377, #212121);">
+    <h2 class="mb-1">{{ user.username }}</h2>
+    <p class="mb-0 text-muted">Gestiona tu perfil, dirección y revisa tus compras</p>
+</div>
+
+<div class="container">
+    <div class="row g-4 justify-content-center align-items-stretch">
+
+
+        <!-- KPIs personalizados -->
+<div class="container mb-4">
+  <div class="row text-center text-white">
+    <div class="col-md-4 mb-2">
+      <div class="kpi-box">
+        <h5 class="text-turquoise">Fecha de registro</h5>
+        <p>{{ user.date_joined|date:"d/m/Y" }}</p>
+      </div>
+    </div>
+    <div class="col-md-4 mb-2">
+      <div class="kpi-box">
+        <h5 class="text-turquoise">Compras realizadas</h5>
+        <p>{{ ventas|length }}</p>
+      </div>
+    </div>
+    <div class="col-md-4 mb-2">
+      <div class="kpi-box">
+        <h5 class="text-turquoise">Total gastado</h5>
+        <p>${{ total_gastado }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+        <!-- Columna izquierda: Datos personales -->
+        <div class="col-lg-6 d-flex">
+            <div class="card profile-card shadow-lg border-0 flex-fill "  style="background-color: #1e1e2f;">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        {% if user.foto %}
+                            <img src="{{ user.foto.url }}" alt="Foto de perfil" class="rounded-circle img-fluid shadow" style="width: 120px; height: 120px; object-fit: cover;">
+                        {% else %}
+                            <img src="{% static 'core/default_avatar.png' %}" alt="Foto por defecto" class="rounded-circle img-fluid shadow" style="width: 120px; height: 120px; object-fit: cover;">
+                        {% endif %}
+                        <p class="mt-2 text-muted">{{ user.email|default:"Sin email" }}</p>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data" class="row g-3">
+                        {% csrf_token %}
+
+                        <h4 class="text-turquoise mb-3">Datos personales</h4>
+                        <div class="col-md-6">
+                            <label class="form-label text-white">Nombre</label>
+                            <input type="text" name="nombre" class="form-control bg-dark text-white border-turquoise" value="{{ user.first_name }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white">Apellido</label>
+                            <input type="text" name="apellido" class="form-control bg-dark text-white border-turquoise" value="{{ user.last_name }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-white">Edad</label>
+                            <input type="number" name="edad" class="form-control bg-dark text-white border-turquoise" value="{{ user.edad|default:'' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-white">Teléfono</label>
+                            <input type="text" name="telefono" class="form-control bg-dark text-white border-turquoise" value="{{ user.telefono|default:'' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-white">Email</label>
+                            <input type="email" name="email" class="form-control bg-dark text-white border-turquoise" value="{{ user.email }}">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label text-white">Actualizar foto</label>
+                            <input type="file" name="foto" class="form-control bg-dark text-white border-turquoise">
+                        </div>
+
+                        <h4 class="text-turquoise mt-4 mb-3">Dirección de envío</h4>
+                        <div class="col-md-6">
+                            <label class="form-label text-white">País</label>
+                            <input type="text" name="pais" class="form-control bg-dark text-white border-turquoise" value="{{ direccion_envio.pais|default:'' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white">Provincia</label>
+                            <input type="text" name="provincia" class="form-control bg-dark text-white border-turquoise" value="{{ direccion_envio.provincia|default:'' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white">Ciudad</label>
+                            <input type="text" name="ciudad" class="form-control bg-dark text-white border-turquoise" value="{{ direccion_envio.ciudad|default:'' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white">Código postal</label>
+                            <input type="text" name="codigo_postal" class="form-control bg-dark text-white border-turquoise" value="{{ direccion_envio.codigo_postal|default:'' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white">Calle</label>
+                            <input type="text" name="calle" class="form-control bg-dark text-white border-turquoise" value="{{ direccion_envio.calle|default:'' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-white">Número</label>
+                            <input type="text" name="numero" class="form-control bg-dark text-white border-turquoise" value="{{ direccion_envio.numero|default:'' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-white">Casa/Depto</label>
+                            <input type="text" name="casa_depto" class="form-control bg-dark text-white border-turquoise" value="{{ direccion_envio.casa_depto|default:'' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-white">Piso</label>
+                            <input type="text" name="piso" class="form-control bg-dark text-white border-turquoise" value="{{ direccion_envio.piso|default:'' }}">
+                        </div>
+
+                        <div class="col-12 mt-3">
+                            <button type="submit" class="btn btn-turquoise w-100">Guardar cambios</button>
+                            <a href="{% url 'password_change' %}" class="btn btn-outline-turquoise w-100 mt-2">Cambiar contraseña</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna derecha: Historial de compras -->
+        <div class="col-lg-6 d-flex">
+            <div class="card purchases-card shadow-lg border-0 flex-fill" style="background-color: #1e1e2f; height: 600px;">
+                <div class="card-body" style="max-height: 550px; overflow-y: auto;">
+                    <h5 class="text-turquoise mb-3 text-center ">Historial de compras</h5>
+                    {% if ventas %}
+                        <ul class="list-group list-group-flush bg-dark">
+                            {% for venta in ventas %}
+                                <li class="list-group-item bg-dark text-white border-turquoise">
+                                    {{ venta.fecha|date:"d/m/Y" }} - Total: ${{ venta.total }}
+                                    <ul class="small">
+                                        {% for detalle in venta.detalleventa_set.all %}
+                                            <li>{{ detalle.producto.nombre }} x{{ detalle.cantidad }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No tienes compras realizadas aún.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body { background-color: #121212; }
+    .text-turquoise { color: #40e0d0; }
+    .btn-turquoise { background-color: #40e0d0; color: #121212; border: none; transition: 0.3s; }
+    .btn-turquoise:hover { background-color: #2abfbf; }
+    .btn-outline-turquoise { border: 1px solid #40e0d0; color: #40e0d0; transition: 0.3s; }
+    .btn-outline-turquoise:hover { background-color: #40e0d0; color: #121212; }
+    .border-turquoise { border: 1px solid #40e0d0 !important; }
+
+    .profile-card   , .purchases-card {
+        margin-bottom: 2rem;
+        display: flex ;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+    }
+
+    
+    @media (min-width: 992px) {
+        .row.g-4 {
+            margin-left: -0.25rem;
+            margin-right: -0.25rem;
+        }
+    }
+
+    /* Scrollbar personalizado */
+    .card-body::-webkit-scrollbar { width: 6px; }
+    .card-body::-webkit-scrollbar-thumb { background-color: #40e0d0; border-radius: 10px; }
+</style>
 {% endblock %}
-  

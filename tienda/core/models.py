@@ -11,6 +11,8 @@ class Cliente(AbstractUser):
     edad = models.PositiveIntegerField(null=True, blank=True)
     telefono = models.CharField(max_length=15, null=True, blank=True)
     fecha_registro = models.DateTimeField(auto_now_add=True)
+    foto = models.ImageField(upload_to='usuarios/fotos/', null=True, blank=True)
+
 
 
 
@@ -59,3 +61,19 @@ class Reseña(models.Model):
 
     def __str__(self):
         return f"Reseña de {self.usuario.username} - {self.fecha.strftime('%d/%m/%Y %H:%M')}"
+
+
+
+class DireccionEnvio(models.Model):
+    cliente = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='direcciones_envio')
+    pais = models.CharField(max_length=50)
+    provincia = models.CharField(max_length=50)
+    ciudad = models.CharField(max_length=50)
+    codigo_postal = models.CharField(max_length=10)
+    calle = models.CharField(max_length=100)
+    numero = models.CharField(max_length=10)
+    casa_depto = models.CharField(max_length=50, null=True, blank=True)
+    piso = models.CharField(max_length=10, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.calle} {self.numero}, {self.ciudad} ({self.pais})"
