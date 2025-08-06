@@ -1,0 +1,46 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+<style>
+  .error-container {
+     background-color: #232424;
+    text-align: center;
+    padding: 60px 20px;
+    color: #00ffff;
+  }
+
+  .error-container h1 {
+    font-size: 72px;
+    font-weight: bold;
+  }
+
+  .error-container p {
+    font-size: 20px;
+    color: #f0f0f0;
+  }
+
+  .btn-turquesa {
+    background-color: #00ffff;
+    color: #000;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 20px;
+    transition: 0.3s;
+  }
+
+  .btn-turquesa:hover {
+    background-color: #00caca;
+  }
+</style>
+
+<div class="error-container">
+    
+  <h1>404</h1>
+  <p>La página que estás buscando no existe 😕</p>
+  <a href="{% url 'inicio' %}" class="btn-turquesa">Volver al inicio</a>
+</div>
+
+{% endblock %}
