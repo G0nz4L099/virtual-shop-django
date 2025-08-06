@@ -79,15 +79,47 @@
     background-color: #00caca;
     transform: scale(1.05);
   }
+
+  .filtro-form {
+    margin-bottom: 25px;
+  }
+
+  .form-label {
+    color: #00ffff;
+  }
 </style>
 
-<div class="ventas-header">
-  <h2>Ventas realizadas</h2>
-  <div>
-    <a href="{% url 'admin_dashboard' %}" class="btn-exportar me-2">📊 Ir al Dashboard</a>
-    <a href="{% url 'exportar_ventas' %}" class="btn-exportar">Exportar Ventas</a>
+<div class="ventas-container">
+  <div class="ventas-header">
+    <h2>Ventas realizadas</h2>
+    <div>
+      <a href="{% url 'admin_dashboard' %}" class="btn-exportar me-2">📊 Ir al Dashboard</a>
+      <a href="{% url 'exportar_ventas' %}" class="btn-exportar">Exportar Ventas</a>
+    </div>
   </div>
-</div>
+
+  <!-- Formulario de filtros -->
+  <form method="get" class="row g-3 filtro-form">
+    <div class="col-md-3">
+      <label class="form-label">Fecha desde</label>
+      <input type="date" name="fecha_inicio" class="form-control" value="{{ request.GET.fecha_inicio }}">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Fecha hasta</label>
+      <input type="date" name="fecha_fin" class="form-control" value="{{ request.GET.fecha_fin }}">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Precio mínimo</label>
+      <input type="number" name="precio_min" step="0.01" class="form-control" value="{{ request.GET.precio_min }}">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Precio máximo</label>
+      <input type="number" name="precio_max" step="0.01" class="form-control" value="{{ request.GET.precio_max }}">
+    </div>
+    <div class="col-12 text-end">
+      <button type="submit" class="btn btn-exportar">Filtrar</button>
+    </div>
+  </form>
 
   <table class="table table-bordered table-dark table-hover">
     <thead>
@@ -107,6 +139,10 @@
         <td>${{ venta.total }}</td>
         <td>{{ venta.fecha }}</td>
         <td><a class="btn btn-sm btn-info" href="{% url 'detalle_venta' venta.id %}">Ver</a></td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" class="text-center text-muted">No se encontraron ventas con los filtros aplicados.</td>
       </tr>
       {% endfor %}
     </tbody>

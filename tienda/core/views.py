@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Producto, Carrito, ItemCarrito, Cliente, DetalleVenta, Venta , Reseña , DireccionEnvio
 from .forms import RegistroForm, AgregarAlCarritoForm
+from django.db.models import Q
 
 
 
@@ -46,7 +47,16 @@ def logout_view(request):
 def productos(request):
     productos = Producto.objects.all()
     form = AgregarAlCarritoForm()
-
+       # Lógica de búsqueda
+    query = request.GET.get('q')
+    if query:
+        productos = Producto.objects.filter (
+          Q(nombre__icontains=query) | Q(descripcion__icontains=query) 
+        )
+    else:
+        productos = Producto.objects.all()
+        #Logica del carrito
+        
     if request.method == 'POST':
         if not request.user.is_authenticated:
             messages.warning(request, 'Debes iniciar sesión para agregar productos al carrito.')
@@ -185,9 +195,30 @@ def clientes_report(request):
     clientes = Cliente.objects.all()
     return render(request, 'core/admin_clientes.html', {'clientes': clientes})
 
+
+
 @staff_member_required
 def ventas_report(request):
     ventas = Venta.objects.all().order_by('fecha')
+
+    # Obtener parámetros de búsqueda
+    fecha_inicio = request.GET.get('fecha_inicio')
+    fecha_fin = request.GET.get('fecha_fin')
+    precio_min = request.GET.get('precio_min')
+    precio_max = request.GET.get('precio_max')
+
+    # Aplicar filtros de fecha
+    if fecha_inicio:
+        ventas = ventas.filter(fecha__gte=fecha_inicio)
+    if fecha_fin:
+        ventas = ventas.filter(fecha__lte=fecha_fin)
+
+    # Aplicar filtros de precio
+    if precio_min:
+        ventas = ventas.filter(total__gte=precio_min)
+    if precio_max:
+        ventas = ventas.filter(total__lte=precio_max)
+
     return render(request, 'core/admin_ventas.html', {'ventas': ventas})
 
 @staff_member_required

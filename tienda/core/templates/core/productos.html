@@ -4,13 +4,13 @@
 
 <style>
     body {
-    background-image: url("{% static 'core/base/assets/fondo.jpg' %}");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    color: #f0f0f0;
-}
+        background-image: url("{% static 'core/base/assets/fondo.jpg' %}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        color: #f0f0f0;
+    }
 
     .product-card {
         background-color: #1a1a1a;
@@ -56,32 +56,44 @@
 
 <div class="container mt-5">
     <h2 class="text-center">Catálogo de Productos</h2>
-    <div class="row">
-        {% for producto in productos %}
-        <div class="col-md-4">
-            <div class="product-card">
-                {% if producto.imagen %}
-                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="img-fluid d-block mx-auto" >
-                {% else %}
-                    <img src="{% static 'img/no-image.png' %}" alt="Sin imagen" class="img-fluid d-block mx-auto">
 
-                {% endif %}
-                <h4>{{ producto.nombre }}</h4>
-                <p>{{ producto.descripcion }}</p>
-                <p><strong>${{ producto.precio }}</strong></p>
-
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="producto_id" value="{{ producto.id }}">
-                    <div class="input-group mb-2">
-                        <input type="number" name="cantidad" value="1" min="1" max="{{ producto.stock }}" class="form-control">
-                    </div>
-                    <button type="submit" class="btn btn-turquesa w-100">Agregar al carrito</button>
-                </form>
-            </div>
+    <!-- Buscador -->
+    <form method="GET" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Buscar productos..." value="{{ request.GET.q }}">
+            <button class="btn btn-turquesa" type="submit">Buscar</button>
         </div>
-        {% endfor %}
-    </div>
+    </form>
+
+    {% if productos %}
+        <div class="row">
+            {% for producto in productos %}
+            <div class="col-md-4">
+                <div class="product-card">
+                    {% if producto.imagen %}
+                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="img-fluid d-block mx-auto">
+                    {% else %}
+                        <img src="{% static 'img/no-image.png' %}" alt="Sin imagen" class="img-fluid d-block mx-auto">
+                    {% endif %}
+                    <h4>{{ producto.nombre }}</h4>
+                    <p>{{ producto.descripcion }}</p>
+                    <p><strong>${{ producto.precio }}</strong></p>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="producto_id" value="{{ producto.id }}">
+                        <div class="input-group mb-2">
+                            <input type="number" name="cantidad" value="1" min="1" max="{{ producto.stock }}" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-turquesa w-100">Agregar al carrito</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center mt-4">No se encontraron productos que coincidan con la búsqueda.</p>
+    {% endif %}
 </div>
 
 {% endblock %}
